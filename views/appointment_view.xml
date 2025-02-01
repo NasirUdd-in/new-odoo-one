@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hospital_appointment_search" model="ir.ui.view">
+        <field name="name">hospital.appointment.search</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <search>
+
+
+            </search>
+        </field>
+    </record>
+
+    <record id="view_hospital_appointment_tree" model="ir.ui.view">
+        <field name="name">hospital.appointment.tree</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="state == 'done'"
+                  decoration-danger="state == 'cancel'"
+                  decoration-warning="state == 'in_consultation'"
+                  decoration-info="state == 'draft'">
+                <field name="patient_id"/>
+                <field name="doctor_name"/>
+                <field name="appointment_time"/>
+                <field name="booking_date" optional="show"/>
+                <field name="activity_ids" widget="list_activity"/>
+                <field name="state" decoration-success="state in ('done' , 'in_consultation')"
+                       decoration-info="state=='draft'" decoration-danger="state=='cancel'" widget="badge"/>
+
+                <field name="ref" optional="hide"/>
+
+                <field name="prescription" placeholder="Enter Your Prescription" optional="hide"/>
+
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="view_hospital_appointment_form" model="ir.ui.view">
+        <field name="name">hospital.appointment.form</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <form create="0" delete="0" edit="0" copy="0">
+                <header>
+                    <button name="action_in_consultaion" string="In Consultaton" type="object" states='draft'/>
+                    <button name="action_done" string="Done" type="object" states='in_consultation'/>
+
+<!--                       <button name="%(test.action_cancel_appointment)d" string="Cancel" type="action" states='draft, in_consultation'/>-->
+                    <button name="action_cancel" string="Cancel" type="object" states='draft, in_consultation'/>
+
+                    <field name="state" widget="statusbar" nolabel="1" options="{'clickable':'1'}"
+                           statusbar_visible="draft,in_consultation,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="priority" widget="priority" class="mr-3"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id"/>
+                            <field name="ref"/>
+                            <field name="gender_opt_two"/>
+                            <button name="action_test" string="object Button" type="object"
+                                    confirm="Are you sure you want to execute python code?"
+                                    class="oe_highlight"/>
+                            <button name="%(test.action_hospital_patient)d" string="Action BUtton" type="action"
+                                    class="oe_highlight"/>
+
+                        </group>
+                        <group>
+                            <field name="doctor_name"/>
+                            <field name="appointment_time"/>
+                            <field name="booking_date"/>
+
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="prescription" string="Prescription">
+                            <group>
+                                <field name="patient_id"/>
+                                <field name="ref"/>
+
+                                <field name="prescription" placeholder="Enter Your Prescription"/>
+                            </group>
+
+                        </page>
+
+                        <page name="pharmacy" string="Pharmacy">
+                            <group>
+                                <field name="pharmacy_line_ids" nolabel="1">
+                                    <tree editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="price_unit"/>
+                                        <field name="qty"/>
+
+                                    </tree>
+                                    <form>
+                                        <group>
+
+                                            <field name="product_id"/>
+                                            <field name="price_unit"/>
+                                            <field name="qty"/>
+
+                                        </group>
+                                    </form>
+                                </field>
+
+                            </group>
+
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="action_hospital_appointment" model="ir.actions.act_window">
+        <field name="name">Appointment</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hospital.appointment</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Appointment!
+            </p>
+        </field>
+    </record>
+
+
+    <menuitem id="menu_appointment" name="Appointment" action="action_hospital_appointment" parent="menu_patient_master"
+              sequence="10"/>
+
+</odoo>
